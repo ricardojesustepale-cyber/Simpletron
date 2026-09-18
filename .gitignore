@@ -1,0 +1,11 @@
+# Ejecutables de Windows
+*.exe
+simpletron
+
+# Archivos de depuración y objetos
+*.o
+*.obj
+*.pdb
+
+# Configuración local de VS Code
+.vscode/
