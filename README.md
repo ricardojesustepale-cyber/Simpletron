@@ -77,7 +77,7 @@ Windows (PowerShell / CMD):
 
 - Salida: ` 12` 
 
-![Caso 1 Ejecucion Correcta](img/caso1_exito.png)
+![Caso 1 Ejecucion Correcta](Img/caso1_exito.png)
 
 ### Caso 2: Error Fatal (División por Cero) 
 
@@ -101,7 +101,7 @@ Mensaje: ***Intento de dividir entre cero***
 
 Estado: Ejecución abortada con Memory Dump.
 
-![Caso 2 Error Fatal](img/caso2_error.png)
+![Caso 2 Error Fatal](Img/caso2_error.png)
 
 ## ⚠️ Limitaciones del Sistema
 
