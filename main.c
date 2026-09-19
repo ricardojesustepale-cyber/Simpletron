@@ -1,199 +1,305 @@
 #include <stdio.h>
-#include <stdbool.h>
-#include <windows.h>
+#include <stdlib.h>
+#include <math.h>
+#include <string.h>
 
-// Definición de las operaciones SML (Simpletron Machine Language)
-#define READ        10
-#define WRITE       11
-#define LOAD        20
-#define STORE       21
-#define ADD         30
-#define SUBTRACT    31
-#define DIVIDE      32
-#define MULTIPLY    33
-#define BRANCH      40
-#define BRANCHNEG   41
-#define BRANCHZERO  42
-#define HALT        43
+#define TAM_MEMORIA 1000
+#define MIN_VAL -99999
+#define MAX_VAL 99999
 
-// Prototipo de la función para el vaciado de memoria 
-void dump(int accumulator, int instructionCounter, int instructionRegister, 
-          int operationCode, int operand, const int memory[]);
+// Opcodes SML
+#define READ 10
+#define WRITE 11
+#define NEWLINE 12
+#define READ_STRING 13
+#define WRITE_STRING 14
 
-int main(void) {
+#define LOAD 20
+#define STORE 21
 
-    SetConsoleOutputCP(CP_UTF8);
+#define ADD 30
+#define SUBTRACT 31
+#define DIVIDE 32
+#define MULTIPLY 33
+#define MODULO 34
+#define EXPONENT 35
 
-    int memory[100] = {0};
-    int accumulator = 0;
-    int instructionCounter = 0;
-    int instructionRegister = 0;
-    int operationCode = 0;
-    int operand = 0;
+#define BRANCH 40
+#define BRANCHNEG 41
+#define BRANCHZERO 42
+#define HALT 43
 
-    int inputVal = 0;
-    bool fatalError = false;
+// Opcodes Punto Flotante
+#define READ_FLOAT 50
+#define WRITE_FLOAT 51
+#define ADD_FLOAT 52
+#define SUB_FLOAT 53
 
-    // 1. Mensaje de bienvenida
-    printf("*** ¡Bienvenido a Simpletron! ***\n");
-    printf("*** Introduzca su programa una instrucción ***\n");
-    printf("*** (o palabra de datos) a la vez en la línea ***\n");
-    printf("*** de texto de entrada. Yo indicaré el número ***\n");
-    printf("*** de posición y una interrogación(?). Usted ***\n");
-    printf("*** tecleará entonces una palabra para esa ***\n");
-    printf("*** posición. Capture el número 9999 para ***\n");
-    printf("*** terminar de introducir su programa. ***\n\n");
+// Prototipos
+void inicializar(int memoria[], int *acumulador, int *contadorInstrucciones, int *registroInstrucciones, int *codigoOperacion, int *operando);
+int cargarPrograma(int memoria[]);
+void vaciadoMemoria(int memoria[], int acumulador, int contadorInstrucciones, int registroInstrucciones, int codigoOperacion, int operando);
 
-    // 2. Carga del programa en la memoria
-    while (instructionCounter < 100) {
-        printf("%02d ? ", instructionCounter);
-        scanf("%d", &inputVal);
+int main() {
+    int memoria[TAM_MEMORIA];
+    int acumulador = 0;
+    int contadorInstrucciones = 0;
+    int registroInstrucciones = 0;
+    int codigoOperacion = 0;
+    int operando = 0;
 
-        if (inputVal == 9999) {
-            break;
-        }
+    inicializar(memoria, &acumulador, &contadorInstrucciones, &registroInstrucciones, &codigoOperacion, &operando);
 
-        // Validación de rango de entrada (-9999 a +9998)
-        if (inputVal < -9999 || inputVal > 9998) {
-            printf("*** Número inválido. Intente nuevamente. ***\n");
-            continue;
-        }
-
-        memory[instructionCounter] = inputVal;
-        instructionCounter++;
+    printf("*** Bienvenido a Simpletron 1000 ***\n");
+    if (!cargarPrograma(memoria)) {
+        printf("*** Error o archivo inexistente. Inicie carga manual. ***\n");
+        return 1;
     }
 
-    printf("*** Se terminó de cargar el programa. ***\n");
-    printf("*** Comienza la ejecución del programa. ***\n\n");
+    printf("*** Carga de programa completada ***\n");
+    printf("*** Iniciando ejecucion del programa ***\n\n");
 
-    // Reiniciar el contador de instrucciones para iniciar la ejecución desde la posición 00
-    instructionCounter = 0;
+    int ejecutando = 1;
 
-    
-    while (instructionCounter < 100 && !fatalError) {
-        
-        instructionRegister = memory[instructionCounter];
+    while (ejecutando && contadorInstrucciones < TAM_MEMORIA) {
+        registroInstrucciones = memoria[contadorInstrucciones];
+        codigoOperacion = registroInstrucciones / 1000;
+        operando = registroInstrucciones % 1000;
 
-        
-        operationCode = instructionRegister / 100;
-        operand = instructionRegister % 100;
-
-        bool branched = false;
-
-        
-        switch (operationCode) {
-            case READ:
-                printf("Teclee un entero: ");
-                scanf("%d", &memory[operand]);
+        switch (codigoOperacion) {
+            case READ: {
+                int valor;
+                printf("Ingrese un entero: ");
+                scanf("%d", &valor);
+                memoria[operando] = valor;
+                contadorInstrucciones++;
                 break;
-
+            }
             case WRITE:
-                printf("Salida: %d\n", memory[operand]);
+                printf("Salida: %d\n", memoria[operando]);
+                contadorInstrucciones++;
                 break;
+
+            case NEWLINE:
+                printf("\n");
+                contadorInstrucciones++;
+                break;
+
+            case READ_STRING: {
+                char str[100];
+                printf("Ingrese una cadena: ");
+                scanf(" %[^\n]", str);
+                int len = strlen(str);
+                
+                // Guardar longitud
+                memoria[operando] = len;
+                
+                // Guardar caracteres como ASCII de 3 dígitos
+                for (int i = 0; i < len; i++) {
+                    if (operando + 1 + i < TAM_MEMORIA) {
+                        memoria[operando + 1 + i] = (int)str[i];
+                    }
+                }
+                contadorInstrucciones++;
+                break;
+            }
+
+            case WRITE_STRING: {
+                int dirBase = operando;
+                if (dirBase < 0 || dirBase >= TAM_MEMORIA) {
+                    printf("\n*** ERROR: Dirección de cadena inválida ***\n");
+                    ejecutando = 0;
+                    break;
+                }
+                int len = memoria[dirBase];
+                printf("Cadena: ");
+                for (int i = 0; i < len; i++) {
+                    if (dirBase + 1 + i < TAM_MEMORIA) {
+                        printf("%c", (char)memoria[dirBase + 1 + i]);
+                    }
+                }
+                printf("\n");
+                contadorInstrucciones++;
+                break;
+            }
 
             case LOAD:
-                accumulator = memory[operand];
+                acumulador = memoria[operando];
+                contadorInstrucciones++;
                 break;
 
             case STORE:
-                memory[operand] = accumulator;
+                memoria[operando] = acumulador;
+                contadorInstrucciones++;
                 break;
 
             case ADD:
-                accumulator += memory[operand];
-                if (accumulator > 9999 || accumulator < -9999) {
-                    printf("\n*** Error: Desbordamiento del acumulador ***\n");
-                    fatalError = true;
-                }
+                acumulador += memoria[operando];
+                contadorInstrucciones++;
                 break;
 
             case SUBTRACT:
-                accumulator -= memory[operand];
-                if (accumulator > 9999 || accumulator < -9999) {
-                    printf("\n*** Error: Desbordamiento del acumulador ***\n");
-                    fatalError = true;
-                }
+                acumulador -= memoria[operando];
+                contadorInstrucciones++;
                 break;
 
             case DIVIDE:
-                if (memory[operand] == 0) {
-                    printf("\n*** Intento de dividir entre cero ***\n");
-                    fatalError = true;
+                if (memoria[operando] == 0) {
+                    printf("\n*** ERROR: Division entre cero ***\n");
+                    ejecutando = 0;
                 } else {
-                    accumulator /= memory[operand];
+                    acumulador /= memoria[operando];
+                    contadorInstrucciones++;
                 }
                 break;
 
             case MULTIPLY:
-                accumulator *= memory[operand];
-                if (accumulator > 9999 || accumulator < -9999) {
-                    printf("\n*** Error: Desbordamiento del acumulador ***\n");
-                    fatalError = true;
+                acumulador *= memoria[operando];
+                contadorInstrucciones++;
+                break;
+
+            case MODULO:
+                if (memoria[operando] == 0) {
+                    printf("\n*** ERROR: Modulo entre cero ***\n");
+                    ejecutando = 0;
+                } else {
+                    acumulador %= memoria[operando];
+                    contadorInstrucciones++;
                 }
                 break;
 
+            case EXPONENT: {
+                int exp = memoria[operando];
+                if (exp < 0) {
+                    printf("\n*** ERROR: Exponente negativo no soportado ***\n");
+                    ejecutando = 0;
+                } else {
+                    acumulador = (int)pow(acumulador, exp);
+                    contadorInstrucciones++;
+                }
+                break;
+            }
+
             case BRANCH:
-                instructionCounter = operand;
-                branched = true;
+                contadorInstrucciones = operando;
                 break;
 
             case BRANCHNEG:
-                if (accumulator < 0) {
-                    instructionCounter = operand;
-                    branched = true;
-                }
+                if (acumulador < 0) contadorInstrucciones = operando;
+                else contadorInstrucciones++;
                 break;
 
             case BRANCHZERO:
-                if (accumulator == 0) {
-                    instructionCounter = operand;
-                    branched = true;
-                }
+                if (acumulador == 0) contadorInstrucciones = operando;
+                else contadorInstrucciones++;
                 break;
 
             case HALT:
-                printf("*** La ejecución de Simpletron terminó normalmente ***\n\n");
-                dump(accumulator, instructionCounter, instructionRegister, operationCode, operand, memory);
-                return 0;
+                printf("*** Ejecucion finalizada de Simpletron ***\n");
+                ejecutando = 0;
+                break;
+
+            // Soporte Punto Flotante
+            case READ_FLOAT: {
+                float fval;
+                printf("Ingrese un flotante: ");
+                scanf("%f", &fval);
+                int *ptr = (int*)&fval;
+                memoria[operando] = *ptr;
+                contadorInstrucciones++;
+                break;
+            }
+
+            case WRITE_FLOAT: {
+                int raw = memoria[operando];
+                float *fptr = (float*)&raw;
+                printf("Salida Flotante: %.2f\n", *fptr);
+                contadorInstrucciones++;
+                break;
+            }
+
+            case ADD_FLOAT: {
+                int rawA = acumulador;
+                int rawM = memoria[operando];
+                float *fa = (float*)&rawA;
+                float *fm = (float*)&rawM;
+                float res = *fa + *fm;
+                int *resPtr = (int*)&res;
+                acumulador = *resPtr;
+                contadorInstrucciones++;
+                break;
+            }
+
+            case SUB_FLOAT: {
+                int rawA = acumulador;
+                int rawM = memoria[operando];
+                float *fa = (float*)&rawA;
+                float *fm = (float*)&rawM;
+                float res = *fa - *fm;
+                int *resPtr = (int*)&res;
+                acumulador = *resPtr;
+                contadorInstrucciones++;
+                break;
+            }
 
             default:
-                printf("\n*** Código de operación no válido ***\n");
-                fatalError = true;
+                printf("\n*** ERROR: Codigo de operacion invalido (%d) ***\n", codigoOperacion);
+                ejecutando = 0;
                 break;
-        }
-
-        
-        if (fatalError) {
-            printf("*** La ejecución de Simpletron terminó anormalmente ***\n\n");
-            dump(accumulator, instructionCounter, instructionRegister, operationCode, operand, memory);
-            return 1;
-        }
-        
-        if (!branched) {
-            instructionCounter++;
         }
     }
 
+    vaciadoMemoria(memoria, acumulador, contadorInstrucciones, registroInstrucciones, codigoOperacion, operando);
     return 0;
 }
 
-// Función para imprimir registros y el estado de la memoria
-void dump(int accumulator, int instructionCounter, int instructionRegister, 
-          int operationCode, int operand, const int memory[]) {
-    printf("Registros:\n");
-    printf("acumulador:          %+05d\n", accumulator);
-    printf("instructionCounter:     %02d\n", instructionCounter);
-    printf("instructionRegister: %+05d\n", instructionRegister);
-    printf("operationcode:          %02d\n", operationCode);
-    printf("operand:                %02d\n\n", operand);
+void inicializar(int memoria[], int *acumulador, int *contadorInstrucciones, int *registroInstrucciones, int *codigoOperacion, int *operando) {
+    for (int i = 0; i < TAM_MEMORIA; i++) memoria[i] = 0;
+    *acumulador = 0;
+    *contadorInstrucciones = 0;
+    *registroInstrucciones = 0;
+    *codigoOperacion = 0;
+    *operando = 0;
+}
 
-    printf("MEMORIA:\n");
-    printf("%8d%6d%6d%6d%6d%6d%6d%6d%6d%6d\n", 0, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+int cargarPrograma(int memoria[]) {
+    FILE *archivo = fopen("programa.simp", "r");
+    if (archivo == NULL) {
+        printf("El archivo 'programa.simp' no existe. Pasando a entrada interactiva...\n");
+        int inst, i = 0;
+        while (i < TAM_MEMORIA) {
+            printf("%03d ? ", i);
+            scanf("%d", &inst);
+            if (inst == -99999) break;
+            memoria[i++] = inst;
+        }
+        return 1;
+    }
 
-    for (int row = 0; row < 10; row++) {
-        printf("%2d ", row * 10);
-        for (int col = 0; col < 10; col++) {
-            printf("%+05d ", memory[row * 10 + col]);
+    int i = 0, inst;
+    while (fscanf(archivo, "%d", &inst) != EOF && i < TAM_MEMORIA) {
+        memoria[i++] = inst;
+    }
+    fclose(archivo);
+    return 1;
+}
+
+void vaciadoMemoria(int memoria[], int acumulador, int contadorInstrucciones, int registroInstrucciones, int codigoOperacion, int operando) {
+    printf("\nREGISTROS:\n");
+    printf("Acumulador:           %+06d\n", acumulador);
+    printf("ContadorInstrucciones:   %03d\n", contadorInstrucciones);
+    printf("RegistroInstrucciones: %+06d\n", registroInstrucciones);
+    printf("CodigoOperacion:        %02d\n", codigoOperacion);
+    printf("Operando:              %03d\n\n", operando);
+
+    printf("MEMORIA (Primeras 100 posiciones):\n  ");
+    for (int i = 0; i < 10; i++) printf("%7d", i);
+    printf("\n");
+
+    for (int i = 0; i < 100; i += 10) {
+        printf("%03d ", i);
+        for (int j = 0; j < 10; j++) {
+            printf("%+06d ", memoria[i + j]);
         }
         printf("\n");
     }
