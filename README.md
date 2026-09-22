@@ -45,4 +45,8 @@ Esta versión extendida del simulador de la computadora **Simpletron** amplía l
 
 ---
 
-## 🛠️ Compilación y Ejecución
+## 📸 Evidencia de Ejecución (Fase 2)
+
+A continuación se muestra la prueba de ejecución del simulador leyendo las instrucciones desde `programa.simp`, procesando la operación de exponenciación (`Opcode 35`) e imprimiendo el volcado de registros y memoria:
+
+![Ejecución Fase 2](Img/fase2_ejecucion.png)
