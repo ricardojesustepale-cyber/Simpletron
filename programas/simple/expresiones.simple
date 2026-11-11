@@ -1,0 +1,10 @@
+10 rem   prueba de expresiones: precedencia, potencia, residuo y agrupacion
+20 input a, b
+30 let c = (a + b) * (a - b)
+40 let d = a ^ 2 - b ^ 2
+50 let e = {a + [b * (a - 1)]} / 2
+60 let r = a % b
+70 print c, d, e, r
+80 print 2 ^ 3 ^ 2 - 500
+90 print -a + 3 * (b - 1) ^ 2
+99 end

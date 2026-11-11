@@ -1,0 +1,14 @@
+10 rem   determina el mayor de dos enteros
+20 input s
+30 input t
+32 rem
+35 rem   prueba si s >= t
+40 if s >= t goto 90
+45 rem
+50 rem   t es mayor que s, por lo que imprime t
+60 print t
+70 goto 99
+75 rem
+80 rem   s es mayor o igual que t, por lo que imprime s
+90 print s
+99 end

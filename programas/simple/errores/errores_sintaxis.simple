@@ -1,0 +1,11 @@
+10 rem   Programa con errores A PROPOSITO (en rem SI se aceptan Mayusculas)
+20 input ab
+30 Let x = 5
+25 print x
+40 let y = (3 + 2
+50 if x = y goto 10
+60 goto 200
+70 imprime x
+80 let z = 999999
+90 let w = 2 + * 3
+99 end

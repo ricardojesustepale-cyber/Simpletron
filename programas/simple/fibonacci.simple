@@ -1,0 +1,11 @@
+10 rem   imprime la serie de Fibonacci hasta un limite l
+20 input l
+30 let a = 0
+40 let b = 1
+50 if a > l goto 99
+60 print a
+70 let t = a + b
+80 let a = b
+90 let b = t
+95 goto 50
+99 end
