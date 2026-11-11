@@ -9,3 +9,7 @@ simpletron
 
 # Configuración local de VS Code
 .vscode/
+# Ejecutables y resultados temporales
+bin/
+pruebas/obtenidas/
+*.out
