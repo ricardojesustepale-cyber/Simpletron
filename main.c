@@ -153,7 +153,7 @@ int main() {
                 }
                 break;
 
-            case MULTIPLY:
+            case MULTIPLY:  
                 acumulador *= memoria[operando];
                 contadorInstrucciones++;
                 break;
@@ -166,7 +166,7 @@ int main() {
                     acumulador %= memoria[operando];
                     contadorInstrucciones++;
                 }
-                break;
+                break; 
 
             case EXPONENT: {
                 int exp = memoria[operando];
@@ -260,6 +260,7 @@ void inicializar(int memoria[], int *acumulador, int *contadorInstrucciones, int
     *registroInstrucciones = 0;
     *codigoOperacion = 0;
     *operando = 0;
+    
 }
 
 int cargarPrograma(int memoria[]) {
@@ -282,7 +283,7 @@ int cargarPrograma(int memoria[]) {
     }
     fclose(archivo);
     return 1;
-}
+}   
 
 void vaciadoMemoria(int memoria[], int acumulador, int contadorInstrucciones, int registroInstrucciones, int codigoOperacion, int operando) {
     printf("\nREGISTROS:\n");
