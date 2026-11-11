@@ -1,6 +1,8 @@
 # Ejecutables de Windows
 *.exe
-simpletron
+/simpletron
+/compilador
+/evaluador
 
 # Archivos de depuración y objetos
 *.o
@@ -9,6 +11,7 @@ simpletron
 
 # Configuración local de VS Code
 .vscode/
+
 # Ejecutables y resultados temporales
 bin/
 pruebas/obtenidas/
