@@ -1,0 +1,9 @@
+; programa.simp - archivo que el simulador carga si se ejecuta sin argumentos
+; (desde esta carpeta). Lee A y B e imprime A ^ B usando EXPONENT (35).
++10090   ; 000  READ         090   lee A
++10091   ; 001  READ         091   lee B
++20090   ; 002  LOAD         090   acc <- A
++35091   ; 003  EXPONENT     091   acc <- A ^ B
++21092   ; 004  STORE        092
++11092   ; 005  WRITE        092   imprime A ^ B
++43000   ; 006  HALT         000
