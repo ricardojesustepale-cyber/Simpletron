@@ -60,7 +60,7 @@ ResultadoAgrupacion verificarAgrupacion(const char *texto, int limite) {
                 return r;
             }
         } else if (esCierre(symb)) {
-            long abierto, posAbierto;
+            long abierto = 0, posAbierto = 0;
             if (!pop(&simbolos, &abierto)) {
                 r.valido = false;
                 r.posicion = i;
@@ -79,7 +79,7 @@ ResultadoAgrupacion verificarAgrupacion(const char *texto, int limite) {
         }
     }
     if (!isEmpty(&simbolos)) {
-        long abierto, posAbierto;
+        long abierto = 0, posAbierto = 0;
         pop(&simbolos, &abierto);
         pop(&posiciones, &posAbierto);
         r.valido = false;

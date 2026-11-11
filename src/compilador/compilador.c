@@ -271,7 +271,7 @@ static int compilarExpresion(const char *texto, int destino) {
         } else if (tok->tipo == VARIABLE) {
             push(&direcciones, ubicacionVariable(tok->simbolo));
         } else {
-            long x, y;
+            long x = 0, y = 0;
             pop(&direcciones, &y);
             pop(&direcciones, &x);
             emitirCarga((int)x);
@@ -283,7 +283,7 @@ static int compilarExpresion(const char *texto, int destino) {
         }
         if (memoriaAgotada) return -1;
     }
-    long resultado;
+    long resultado = 0;
     pop(&direcciones, &resultado);
     return (int)resultado;
 }
