@@ -151,19 +151,18 @@ static int cargarArchivo(const char *nombre) {
         char token[64], sobra[64];
         int n = sscanf(linea, "%63s %63s", token, sobra);
         if (n <= 0) continue;                         /* linea vacia */
-        if (n == 2) {
-            snprintf(mensajeError, sizeof mensajeError,
-                     "linea %d: se esperaba una sola palabra, sobra '%s'", numLinea, sobra);
-            fclose(f);
-            return 0;
-        }
-
         if (token[0] == '@') {                        /* cambio de direccion */
             char *fin;
             long dir = strtol(token + 1, &fin, 10);
             if (token[1] == '\0' || *fin != '\0' || dir < 0 || dir >= TAM_MEMORIA) {
                 snprintf(mensajeError, sizeof mensajeError,
                          "linea %d: direccion invalida '%s'", numLinea, token);
+                fclose(f);
+                return 0;
+            }
+            if (n == 2) {
+                snprintf(mensajeError, sizeof mensajeError,
+                         "linea %d: se esperaba una sola palabra, sobra '%s'", numLinea, sobra);
                 fclose(f);
                 return 0;
             }
@@ -176,6 +175,12 @@ static int cargarArchivo(const char *nombre) {
         if (*fin != '\0' || fin == token || strlen(token) > 8) {
             snprintf(mensajeError, sizeof mensajeError,
                      "linea %d: '%s' no es una palabra SML valida", numLinea, token);
+            fclose(f);
+            return 0;
+        }
+        if (n == 2) {
+            snprintf(mensajeError, sizeof mensajeError,
+                     "linea %d: se esperaba una sola palabra, sobra '%s'", numLinea, sobra);
             fclose(f);
             return 0;
         }
