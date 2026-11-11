@@ -1,0 +1,12 @@
+10 rem   lee n y despues n numeros; imprime su promedio entero
+20 input n
+30 if n <= 0 goto 99
+40 let s = 0
+50 let c = 0
+55 rem   ciclo controlado por contador (termina cuando c == n)
+60 input x
+70 let s = s + x
+80 let c = c + 1
+90 if c != n goto 60
+95 print s / n
+99 end

@@ -1,0 +1,15 @@
+10 rem   calcula n! (para n <= 8; 9! = 362880 desborda a Simpletron)
+20 input n
+25 rem   si n es negativo imprime -1
+30 if n < 0 goto 90
+40 let f = 1
+50 let i = 1
+55 rem   mientras i <= n:  f = f * i
+60 if i > n goto 80
+65 let f = f * i
+70 let i = i + 1
+75 goto 60
+80 print f
+85 goto 99
+90 print -1
+99 end
