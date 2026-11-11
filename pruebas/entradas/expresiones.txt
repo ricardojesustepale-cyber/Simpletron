@@ -1,0 +1,35 @@
+# Pruebas del modulo de expresiones (evaluador)
+# --- precedencia y asociatividad ---
+2 + 3 * 4
+(2 + 3) * 4
+10 - 4 - 3
+100 / 10 / 5
+2 ^ 3 ^ 2
+(2 ^ 3) ^ 2
+6 + 2 * 3 ^ 2 - 8 / 4
+17 % 5 * 2
+# --- operandos de varios digitos y variables ---
+125 * 40 - 999
+(a + b) * c ; a=2 b=3 c=10
+{a + [b * (c - 1)]} / 2 ; a=4 b=3 c=5
+x ^ 2 - 2 * x + 1 ; x=7
+# --- menos unario ---
+-5 + 3
+-x ^ 2 ; x=3
+4 * -(2 + 1)
+# --- errores de agrupacion ---
+(2 + 3
+2 + 3)
+[2 + (3 * 4])
+{a + b) ; a=1 b=2
+# --- errores de sintaxis ---
+2 + * 3
+2 3 + 4
+ab + 1
+A + 1
+2 + 3 $ 4
+()
+# --- errores de evaluacion ---
+10 / (5 - 5)
+2 ^ -1
+y + 1
