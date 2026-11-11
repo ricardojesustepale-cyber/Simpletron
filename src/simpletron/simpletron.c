@@ -103,10 +103,10 @@ static int cargarInteractivo(void) {
     printf("*** Teclee %d para terminar la carga.                     ***\n", CENTINELA);
 
     int direccion = 0;
-    long long palabra;
+    long palabra;
     while (direccion < TAM_MEMORIA) {
         printf("%03d ? ", direccion);
-        int leidos = scanf("%lld", &palabra);
+        int leidos = scanf("%ld", &palabra);
         if (leidos == EOF) break;
         if (leidos != 1) {
             int c;
@@ -114,7 +114,7 @@ static int cargarInteractivo(void) {
             printf("*** Entrada no numerica, intente de nuevo ***\n");
             continue;
         }
-        if (eco) printf("%lld\n", palabra);
+        if (eco) printf("%ld\n", palabra);
         if (palabra == CENTINELA) break;
         if (palabra < MIN_VAL || palabra > MAX_VAL) {
             printf("*** Palabra fuera de rango (%d a +%d), intente de nuevo ***\n", MIN_VAL, MAX_VAL);
@@ -241,7 +241,7 @@ static int errorFatal(const char *mensaje) {
 static int enRango(long long valor, const char *operacion) {
     if (valor < MIN_VAL || valor > MAX_VAL) {
         char msg[120];
-        snprintf(msg, sizeof msg, "desbordamiento del acumulador en %s (resultado %lld)", operacion, valor);
+        snprintf(msg, sizeof msg, "desbordamiento del acumulador en %s (resultado %.0f)", operacion, (double)valor);
         return errorFatal(msg);
     }
     accumulator = (int)valor;
@@ -249,12 +249,12 @@ static int enRango(long long valor, const char *operacion) {
 }
 
 static int leerEntero(int *valor) {
-    long long v;
+    long v;
     while (1) {
         printf("? ");
-        int leidos = scanf("%lld", &v);
+        int leidos = scanf("%ld", &v);
         if (leidos == 1) {
-            if (eco) printf("%lld\n", v);
+            if (eco) printf("%ld\n", v);
             if (v >= MIN_VAL && v <= MAX_VAL) {
                 *valor = (int)v;
                 return 1;
