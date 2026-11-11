@@ -1,0 +1,18 @@
+*** Programa cargado desde programas/sml/errores/opcode_invalido.sml ***
+*** Inicia la ejecucion del programa ***
+
+*** ERROR FATAL: codigo de operacion invalido +99000 (instruccion en la direccion 001) ***
+*** La ejecucion de Simpletron termino en forma anormal ***
+
+REGISTROS:
+accumulator          +00000
+instructionCounter      001
+instructionRegister  +99000
+operationCode            99
+operand                 000
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +20900 +99000 +43000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (99 filas en cero)
+[codigo de salida: 2]

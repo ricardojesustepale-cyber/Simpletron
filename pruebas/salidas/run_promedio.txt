@@ -1,0 +1,10 @@
+*** Programa cargado desde pruebas/obtenidas/promedio.sml ***
+*** Inicia la ejecucion del programa ***
+? 4
+? 10
+? 20
+? 30
+? 41
+25
+*** Ejecucion de Simpletron terminada (HALT) ***
+[codigo de salida: 0]

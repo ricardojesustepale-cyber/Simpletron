@@ -1,0 +1,20 @@
+*** Programa cargado desde programas/sml/errores/desbordamiento.sml ***
+*** Inicia la ejecucion del programa ***
+
+*** ERROR FATAL: desbordamiento del acumulador en ADD (resultado 180000) (instruccion en la direccion 001) ***
+*** La ejecucion de Simpletron termino en forma anormal ***
+
+REGISTROS:
+accumulator          +90000
+instructionCounter      001
+instructionRegister  +30900
+operationCode            30
+operand                 900
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +20900 +30900 +43000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (89 filas en cero)
+900   +90000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (9 filas en cero)
+[codigo de salida: 2]

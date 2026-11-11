@@ -1,0 +1,20 @@
+*** Programa cargado desde programas/sml/errores/modulo_cero.sml ***
+*** Inicia la ejecucion del programa ***
+
+*** ERROR FATAL: intento de modulo entre cero (instruccion en la direccion 001) ***
+*** La ejecucion de Simpletron termino en forma anormal ***
+
+REGISTROS:
+accumulator          +00010
+instructionCounter      001
+instructionRegister  +34901
+operationCode            34
+operand                 901
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +20900 +34901 +43000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (89 filas en cero)
+900   +00010 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (9 filas en cero)
+[codigo de salida: 2]

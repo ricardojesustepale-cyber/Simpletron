@@ -1,0 +1,27 @@
+Compilando programa.simple ...
+=== PRIMERA PASADA ===
+
+TABLA DE SIMBOLOS
+  Simbolo   Tipo   Ubicacion   Descripcion
+  -------   ----   ---------   -----------
+       10      L         000   linea 10
+      120      V         999   variable 'x'
+       20      L         001   linea 20
+       30      L         002   linea 30
+       40      L         003   linea 40
+
+SML preliminar (??? = referencia hacia adelante sin resolver):
++10999   ; 000  READ         999   | 10 input x
++40???   ; 001  BRANCH       ???   -> linea 40 (pendiente)
++11999   ; 002  WRITE        999   | 30 print x
++43000   ; 003  HALT         000   | 40 end
+
+Arreglo flags (solo entradas distintas de -1):
+  flags[001] = 40
+
+=== SEGUNDA PASADA ===
+
+  celda 001: salto a la linea 40 -> ubicacion 003  =>  +40003
+
+Compilacion exitosa: 4 instrucciones, 1 celdas de datos -> pruebas/obtenidas/programa.sml
+[codigo de salida: 0]

@@ -1,0 +1,2 @@
+*** Error al cargar el programa: linea 3: 'LOAD' no es una palabra SML valida ***
+[codigo de salida: 1]

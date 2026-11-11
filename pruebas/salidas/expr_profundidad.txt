@@ -1,0 +1,18 @@
+(Limite de anidamiento: 2 niveles)
+
+Expresion  : ((1+2)*3)
+Agrupacion : correcta (profundidad maxima 2)
+Postfijo   : 1 2 + 3 *
+Resultado  : 9
+
+Expresion  : (((1+2)*3)+4)
+Agrupacion : INCORRECTA - la profundidad de anidamiento (3) excede el limite de 2
+             (((1+2)*3)+4)
+               ^
+
+Expresion  : {[(a)]}
+Agrupacion : INCORRECTA - la profundidad de anidamiento (3) excede el limite de 2
+             {[(a)]}
+               ^
+
+[codigo de salida: 0]

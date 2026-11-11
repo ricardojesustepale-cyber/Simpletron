@@ -1,0 +1,2 @@
+*** Error al cargar el programa: linea 3: la palabra +123456 esta fuera del rango permitido (-99999 a +99999) ***
+[codigo de salida: 1]

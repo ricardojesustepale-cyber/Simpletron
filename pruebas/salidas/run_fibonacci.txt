@@ -1,0 +1,17 @@
+*** Programa cargado desde pruebas/obtenidas/fibonacci.sml ***
+*** Inicia la ejecucion del programa ***
+? 100
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+55
+89
+*** Ejecucion de Simpletron terminada (HALT) ***
+[codigo de salida: 0]

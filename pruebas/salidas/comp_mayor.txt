@@ -1,0 +1,48 @@
+Compilando mayor.simple ...
+=== PRIMERA PASADA ===
+
+TABLA DE SIMBOLOS
+  Simbolo   Tipo   Ubicacion   Descripcion
+  -------   ----   ---------   -----------
+       10      L         000   linea 10
+       20      L         000   linea 20
+      115      V         999   variable 's'
+       30      L         001   linea 30
+      116      V         998   variable 't'
+       32      L         002   linea 32
+       35      L         002   linea 35
+       40      L         002   linea 40
+       45      L         006   linea 45
+       50      L         006   linea 50
+       60      L         006   linea 60
+       70      L         007   linea 70
+       75      L         008   linea 75
+       80      L         008   linea 80
+       90      L         008   linea 90
+       99      L         009   linea 99
+
+SML preliminar (??? = referencia hacia adelante sin resolver):
++10999   ; 000  READ         999   | 20 input s
++10998   ; 001  READ         998   | 30 input t
++20998   ; 002  LOAD         998   | 40 if s >= t goto 90
++31999   ; 003  SUBTRACT     999
++41???   ; 004  BRANCHNEG    ???   -> linea 90 (pendiente)
++42???   ; 005  BRANCHZERO   ???   -> linea 90 (pendiente)
++11998   ; 006  WRITE        998   | 60 print t
++40???   ; 007  BRANCH       ???   -> linea 99 (pendiente)
++11999   ; 008  WRITE        999   | 90 print s
++43000   ; 009  HALT         000   | 99 end
+
+Arreglo flags (solo entradas distintas de -1):
+  flags[004] = 90
+  flags[005] = 90
+  flags[007] = 99
+
+=== SEGUNDA PASADA ===
+
+  celda 004: salto a la linea 90 -> ubicacion 008  =>  +41008
+  celda 005: salto a la linea 90 -> ubicacion 008  =>  +42008
+  celda 007: salto a la linea 99 -> ubicacion 009  =>  +40009
+
+Compilacion exitosa: 10 instrucciones, 2 celdas de datos -> pruebas/obtenidas/mayor.sml
+[codigo de salida: 0]

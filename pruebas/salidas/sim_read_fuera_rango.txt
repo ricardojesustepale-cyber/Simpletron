@@ -1,0 +1,13 @@
+*** Programa cargado desde programas/sml/suma_dos.sml ***
+*** Inicia la ejecucion del programa ***
+? 123456
+*** Valor fuera de rango (-99999 a +99999), intente de nuevo ***
+? abc
+*** Entrada no numerica, intente de nuevo ***
+? -200000
+*** Valor fuera de rango (-99999 a +99999), intente de nuevo ***
+? 7
+? 8
+15
+*** Ejecucion de Simpletron terminada (HALT) ***
+[codigo de salida: 0]

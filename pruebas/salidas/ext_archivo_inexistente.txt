@@ -1,0 +1,2 @@
+*** Error al cargar el programa: no se pudo abrir el archivo 'programas/sml/no_existe.sml' ***
+[codigo de salida: 1]
