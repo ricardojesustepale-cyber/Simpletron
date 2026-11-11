@@ -1,307 +1,455 @@
+/*
+ * simpletron.c - Simulador de la computadora Simpletron (Fase 2: memoria extendida)
+ *
+ * Memoria de 1000 palabras decimales con signo (-99999 a +99999).
+ * Formato de instruccion:  +CCOOO   CC = codigo de operacion, OOO = operando (000-999)
+ *
+ * Uso:
+ *   simpletron                  carga programa.simp si existe; si no, carga interactiva
+ *   simpletron archivo.sml      carga el programa desde el archivo indicado
+ * Opciones:
+ *   --traza      muestra cada instruccion antes de ejecutarla
+ *   --sin-dump   no imprime el vaciado de memoria al terminar con HALT
+ *   --eco        repite cada dato leido (util al redirigir la entrada desde un archivo)
+ */
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
+#include <ctype.h>
+#include <math.h>
 
-#define TAM_MEMORIA 1000
-#define MIN_VAL -99999
-#define MAX_VAL 99999
+#include "opcodes.h"
 
-// Opcodes SML
-#define READ 10
-#define WRITE 11
-#define NEWLINE 12
-#define READ_STRING 13
-#define WRITE_STRING 14
+/* ---------------- Estado de la maquina ---------------- */
+static int memory[TAM_MEMORIA];
+static int accumulator = 0;          /* registro acumulador */
+static int instructionCounter = 0;   /* direccion de la siguiente instruccion */
+static int instructionRegister = 0;  /* instruccion en ejecucion */
+static int operationCode = 0;        /* dos digitos izquierdos */
+static int operand = 0;              /* tres digitos derechos */
 
-#define LOAD 20
-#define STORE 21
+static int traza = 0;
+static int eco = 0;
+static char mensajeError[200] = "";
 
-#define ADD 30
-#define SUBTRACT 31
-#define DIVIDE 32
-#define MULTIPLY 33
-#define MODULO 34
-#define EXPONENT 35
+/* ---------------- Prototipos ---------------- */
+static void inicializar(void);
+static int  cargarInteractivo(void);
+static int  cargarArchivo(const char *nombre);
+static int  ejecutar(void);
+static int  cicloInstruccion(void);
+static int  errorFatal(const char *mensaje);
+static int  enRango(long long valor, const char *operacion);
+static int  leerEntero(int *valor);
+static void vaciadoMemoria(void);
 
-#define BRANCH 40
-#define BRANCHNEG 41
-#define BRANCHZERO 42
-#define HALT 43
+/* ======================================================================= */
 
-// Opcodes Punto Flotante
-#define READ_FLOAT 50
-#define WRITE_FLOAT 51
-#define ADD_FLOAT 52
-#define SUB_FLOAT 53
+int main(int argc, char *argv[]) {
+    const char *archivo = NULL;
+    int dump = 1;
 
-// Prototipos
-void inicializar(int memoria[], int *acumulador, int *contadorInstrucciones, int *registroInstrucciones, int *codigoOperacion, int *operando);
-int cargarPrograma(int memoria[]);
-void vaciadoMemoria(int memoria[], int acumulador, int contadorInstrucciones, int registroInstrucciones, int codigoOperacion, int operando);
-
-int main() {
-    int memoria[TAM_MEMORIA];
-    int acumulador = 0;
-    int contadorInstrucciones = 0;
-    int registroInstrucciones = 0;
-    int codigoOperacion = 0;
-    int operando = 0;
-
-    inicializar(memoria, &acumulador, &contadorInstrucciones, &registroInstrucciones, &codigoOperacion, &operando);
-
-    printf("*** Bienvenido a Simpletron 1000 ***\n");
-    if (!cargarPrograma(memoria)) {
-        printf("*** Error o archivo inexistente. Inicie carga manual. ***\n");
-        return 1;
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "--traza") == 0) traza = 1;
+        else if (strcmp(argv[i], "--sin-dump") == 0) dump = 0;
+        else if (strcmp(argv[i], "--eco") == 0) eco = 1;
+        else if (argv[i][0] == '-') {
+            fprintf(stderr, "Opcion desconocida: %s\n", argv[i]);
+            fprintf(stderr, "Uso: simpletron [archivo.sml] [--traza] [--sin-dump] [--eco]\n");
+            return 1;
+        } else archivo = argv[i];
     }
 
-    printf("*** Carga de programa completada ***\n");
-    printf("*** Iniciando ejecucion del programa ***\n\n");
+    inicializar();
 
-    int ejecutando = 1;
-
-    while (ejecutando && contadorInstrucciones < TAM_MEMORIA) {
-        registroInstrucciones = memoria[contadorInstrucciones];
-        codigoOperacion = registroInstrucciones / 1000;
-        operando = registroInstrucciones % 1000;
-
-        switch (codigoOperacion) {
-            case READ: {
-                int valor;
-                printf("Ingrese un entero: ");
-                scanf("%d", &valor);
-                memoria[operando] = valor;
-                contadorInstrucciones++;
-                break;
-            }
-            case WRITE:
-                printf("Salida: %d\n", memoria[operando]);
-                contadorInstrucciones++;
-                break;
-
-            case NEWLINE:
-                printf("\n");
-                contadorInstrucciones++;
-                break;
-
-            case READ_STRING: {
-                char str[100];
-                printf("Ingrese una cadena: ");
-                scanf(" %[^\n]", str);
-                int len = strlen(str);
-                
-                // Guardar longitud
-                memoria[operando] = len;
-                
-                // Guardar caracteres como ASCII de 3 dígitos
-                for (int i = 0; i < len; i++) {
-                    if (operando + 1 + i < TAM_MEMORIA) {
-                        memoria[operando + 1 + i] = (int)str[i];
-                    }
-                }
-                contadorInstrucciones++;
-                break;
-            }
-
-            case WRITE_STRING: {
-                int dirBase = operando;
-                if (dirBase < 0 || dirBase >= TAM_MEMORIA) {
-                    printf("\n*** ERROR: Dirección de cadena inválida ***\n");
-                    ejecutando = 0;
-                    break;
-                }
-                int len = memoria[dirBase];
-                printf("Cadena: ");
-                for (int i = 0; i < len; i++) {
-                    if (dirBase + 1 + i < TAM_MEMORIA) {
-                        printf("%c", (char)memoria[dirBase + 1 + i]);
-                    }
-                }
-                printf("\n");
-                contadorInstrucciones++;
-                break;
-            }
-
-            case LOAD:
-                acumulador = memoria[operando];
-                contadorInstrucciones++;
-                break;
-
-            case STORE:
-                memoria[operando] = acumulador;
-                contadorInstrucciones++;
-                break;
-
-            case ADD:
-                acumulador += memoria[operando];
-                contadorInstrucciones++;
-                break;
-
-            case SUBTRACT:
-                acumulador -= memoria[operando];
-                contadorInstrucciones++;
-                break;
-
-            case DIVIDE:
-                if (memoria[operando] == 0) {
-                    printf("\n*** ERROR: Division entre cero ***\n");
-                    ejecutando = 0;
-                } else {
-                    acumulador /= memoria[operando];
-                    contadorInstrucciones++;
-                }
-                break;
-
-            case MULTIPLY:  
-                acumulador *= memoria[operando];
-                contadorInstrucciones++;
-                break;
-
-            case MODULO:
-                if (memoria[operando] == 0) {
-                    printf("\n*** ERROR: Modulo entre cero ***\n");
-                    ejecutando = 0;
-                } else {
-                    acumulador %= memoria[operando];
-                    contadorInstrucciones++;
-                }
-                break; 
-
-            case EXPONENT: {
-                int exp = memoria[operando];
-                if (exp < 0) {
-                    printf("\n*** ERROR: Exponente negativo no soportado ***\n");
-                    ejecutando = 0;
-                } else {
-                    acumulador = (int)pow(acumulador, exp);
-                    contadorInstrucciones++;
-                }
-                break;
-            }
-
-            case BRANCH:
-                contadorInstrucciones = operando;
-                break;
-
-            case BRANCHNEG:
-                if (acumulador < 0) contadorInstrucciones = operando;
-                else contadorInstrucciones++;
-                break;
-
-            case BRANCHZERO:
-                if (acumulador == 0) contadorInstrucciones = operando;
-                else contadorInstrucciones++;
-                break;
-
-            case HALT:
-                printf("*** Ejecucion finalizada de Simpletron ***\n");
-                ejecutando = 0;
-                break;
-
-            // Soporte Punto Flotante
-            case READ_FLOAT: {
-                float fval;
-                printf("Ingrese un flotante: ");
-                scanf("%f", &fval);
-                int *ptr = (int*)&fval;
-                memoria[operando] = *ptr;
-                contadorInstrucciones++;
-                break;
-            }
-
-            case WRITE_FLOAT: {
-                int raw = memoria[operando];
-                float *fptr = (float*)&raw;
-                printf("Salida Flotante: %.2f\n", *fptr);
-                contadorInstrucciones++;
-                break;
-            }
-
-            case ADD_FLOAT: {
-                int rawA = acumulador;
-                int rawM = memoria[operando];
-                float *fa = (float*)&rawA;
-                float *fm = (float*)&rawM;
-                float res = *fa + *fm;
-                int *resPtr = (int*)&res;
-                acumulador = *resPtr;
-                contadorInstrucciones++;
-                break;
-            }
-
-            case SUB_FLOAT: {
-                int rawA = acumulador;
-                int rawM = memoria[operando];
-                float *fa = (float*)&rawA;
-                float *fm = (float*)&rawM;
-                float res = *fa - *fm;
-                int *resPtr = (int*)&res;
-                acumulador = *resPtr;
-                contadorInstrucciones++;
-                break;
-            }
-
-            default:
-                printf("\n*** ERROR: Codigo de operacion invalido (%d) ***\n", codigoOperacion);
-                ejecutando = 0;
-                break;
+    if (archivo == NULL) {
+        /* Sin argumento: se busca programa.simp (requerimiento 2.3) */
+        FILE *prueba = fopen("programa.simp", "r");
+        if (prueba != NULL) {
+            fclose(prueba);
+            archivo = "programa.simp";
         }
     }
 
-    vaciadoMemoria(memoria, acumulador, contadorInstrucciones, registroInstrucciones, codigoOperacion, operando);
+    if (archivo != NULL) {
+        if (!cargarArchivo(archivo)) {
+            fprintf(stderr, "*** Error al cargar el programa: %s ***\n", mensajeError);
+            return 1;
+        }
+        printf("*** Programa cargado desde %s ***\n", archivo);
+    } else {
+        cargarInteractivo();
+    }
+
+    int ok = ejecutar();
+    if (dump || !ok) vaciadoMemoria();
+    return ok ? 0 : 2;
+}
+
+static void inicializar(void) {
+    for (int i = 0; i < TAM_MEMORIA; i++) memory[i] = 0;
+    accumulator = instructionCounter = instructionRegister = 0;
+    operationCode = operand = 0;
+}
+
+/* ======================================================================= */
+/*                                 CARGA                                   */
+/* ======================================================================= */
+
+static int cargarInteractivo(void) {
+    printf("*** Bienvenido a Simpletron 1000 ***\n");
+    printf("*** Introduzca su programa una instruccion (o palabra de datos) ***\n");
+    printf("*** a la vez. Se mostrara la direccion y un signo ?.           ***\n");
+    printf("*** Teclee %d para terminar la carga.                     ***\n", CENTINELA);
+
+    int direccion = 0;
+    long long palabra;
+    while (direccion < TAM_MEMORIA) {
+        printf("%03d ? ", direccion);
+        int leidos = scanf("%lld", &palabra);
+        if (leidos == EOF) break;
+        if (leidos != 1) {
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF) { }
+            printf("*** Entrada no numerica, intente de nuevo ***\n");
+            continue;
+        }
+        if (eco) printf("%lld\n", palabra);
+        if (palabra == CENTINELA) break;
+        if (palabra < MIN_VAL || palabra > MAX_VAL) {
+            printf("*** Palabra fuera de rango (%d a +%d), intente de nuevo ***\n", MIN_VAL, MAX_VAL);
+            continue;
+        }
+        memory[direccion++] = (int)palabra;
+    }
+    printf("*** Carga del programa completada ***\n");
+    return direccion;
+}
+
+/*
+ * Formato del archivo:
+ *   - una palabra por linea, se cargan desde la direccion 000
+ *   - ';' o '#' inician un comentario hasta el fin de la linea
+ *   - @NNN cambia la direccion de carga (para colocar la zona de datos)
+ *   - -999999 (opcional) termina la carga
+ */
+static int cargarArchivo(const char *nombre) {
+    FILE *f = fopen(nombre, "r");
+    if (f == NULL) {
+        snprintf(mensajeError, sizeof mensajeError, "no se pudo abrir el archivo '%s'", nombre);
+        return 0;
+    }
+
+    char linea[256];
+    int numLinea = 0, direccion = 0, cargadas = 0;
+
+    while (fgets(linea, sizeof linea, f) != NULL) {
+        numLinea++;
+        char *comentario = strpbrk(linea, ";#");
+        if (comentario != NULL) *comentario = '\0';
+
+        char token[64], sobra[64];
+        int n = sscanf(linea, "%63s %63s", token, sobra);
+        if (n <= 0) continue;                         /* linea vacia */
+        if (n == 2) {
+            snprintf(mensajeError, sizeof mensajeError,
+                     "linea %d: se esperaba una sola palabra, sobra '%s'", numLinea, sobra);
+            fclose(f);
+            return 0;
+        }
+
+        if (token[0] == '@') {                        /* cambio de direccion */
+            char *fin;
+            long dir = strtol(token + 1, &fin, 10);
+            if (token[1] == '\0' || *fin != '\0' || dir < 0 || dir >= TAM_MEMORIA) {
+                snprintf(mensajeError, sizeof mensajeError,
+                         "linea %d: direccion invalida '%s'", numLinea, token);
+                fclose(f);
+                return 0;
+            }
+            direccion = (int)dir;
+            continue;
+        }
+
+        char *fin;
+        long long palabra = strtoll(token, &fin, 10);
+        if (*fin != '\0' || fin == token || strlen(token) > 8) {
+            snprintf(mensajeError, sizeof mensajeError,
+                     "linea %d: '%s' no es una palabra SML valida", numLinea, token);
+            fclose(f);
+            return 0;
+        }
+        if (palabra == CENTINELA) break;
+        if (palabra < MIN_VAL || palabra > MAX_VAL) {
+            snprintf(mensajeError, sizeof mensajeError,
+                     "linea %d: la palabra %s esta fuera del rango permitido (%d a +%d)",
+                     numLinea, token, MIN_VAL, MAX_VAL);
+            fclose(f);
+            return 0;
+        }
+        if (direccion >= TAM_MEMORIA) {
+            snprintf(mensajeError, sizeof mensajeError,
+                     "linea %d: el programa excede la memoria (%d palabras)", numLinea, TAM_MEMORIA);
+            fclose(f);
+            return 0;
+        }
+        memory[direccion++] = (int)palabra;
+        cargadas++;
+    }
+    fclose(f);
+
+    if (cargadas == 0) {
+        snprintf(mensajeError, sizeof mensajeError, "el archivo '%s' no contiene instrucciones", nombre);
+        return 0;
+    }
+    return 1;
+}
+
+/* ======================================================================= */
+/*                               EJECUCION                                 */
+/* ======================================================================= */
+
+static int ejecutar(void) {
+    instructionCounter = 0;
+    accumulator = 0;
+    mensajeError[0] = '\0';
+    printf("*** Inicia la ejecucion del programa ***\n");
+
+    while (cicloInstruccion()) { }
+
+    if (mensajeError[0] != '\0') {
+        printf("\n*** ERROR FATAL: %s ***\n", mensajeError);
+        printf("*** La ejecucion de Simpletron termino en forma anormal ***\n");
+        return 0;
+    }
+    printf("*** Ejecucion de Simpletron terminada (HALT) ***\n");
+    return 1;
+}
+
+static int errorFatal(const char *mensaje) {
+    snprintf(mensajeError, sizeof mensajeError, "%s (instruccion en la direccion %03d)",
+             mensaje, instructionCounter);
     return 0;
 }
 
-void inicializar(int memoria[], int *acumulador, int *contadorInstrucciones, int *registroInstrucciones, int *codigoOperacion, int *operando) {
-    for (int i = 0; i < TAM_MEMORIA; i++) memoria[i] = 0;
-    *acumulador = 0;
-    *contadorInstrucciones = 0;
-    *registroInstrucciones = 0;
-    *codigoOperacion = 0;
-    *operando = 0;
-    
+/* Verifica que el resultado quepa en una palabra antes de guardarlo en el acumulador. */
+static int enRango(long long valor, const char *operacion) {
+    if (valor < MIN_VAL || valor > MAX_VAL) {
+        char msg[120];
+        snprintf(msg, sizeof msg, "desbordamiento del acumulador en %s (resultado %lld)", operacion, valor);
+        return errorFatal(msg);
+    }
+    accumulator = (int)valor;
+    return 1;
 }
 
-int cargarPrograma(int memoria[]) {
-    FILE *archivo = fopen("programa.simp", "r");
-    if (archivo == NULL) {
-        printf("El archivo 'programa.simp' no existe. Pasando a entrada interactiva...\n");
-        int inst, i = 0;
-        while (i < TAM_MEMORIA) {
-            printf("%03d ? ", i);
-            scanf("%d", &inst);
-            if (inst == -99999) break;
-            memoria[i++] = inst;
+static int leerEntero(int *valor) {
+    long long v;
+    while (1) {
+        printf("? ");
+        int leidos = scanf("%lld", &v);
+        if (leidos == 1) {
+            if (eco) printf("%lld\n", v);
+            if (v >= MIN_VAL && v <= MAX_VAL) {
+                *valor = (int)v;
+                return 1;
+            }
+            printf("*** Valor fuera de rango (%d a +%d), intente de nuevo ***\n", MIN_VAL, MAX_VAL);
+            continue;
         }
-        return 1;
+        if (leidos == EOF) return errorFatal("READ sin datos: se termino la entrada");
+        char basura[100];
+        if (scanf("%99s", basura) == 1 && eco) printf("%s\n", basura);
+        printf("*** Entrada no numerica, intente de nuevo ***\n");
+    }
+}
+
+/* Ciclo de instruccion. Devuelve 1 si la ejecucion debe continuar. */
+static int cicloInstruccion(void) {
+    /* 0. Validar el contador de instrucciones */
+    if (instructionCounter < 0 || instructionCounter >= TAM_MEMORIA) {
+        snprintf(mensajeError, sizeof mensajeError,
+                 "direccion invalida %d: el programa salio de la memoria sin HALT",
+                 instructionCounter);
+        return 0;
     }
 
-    int i = 0, inst;
-    while (fscanf(archivo, "%d", &inst) != EOF && i < TAM_MEMORIA) {
-        memoria[i++] = inst;
+    /* 1. Traer la instruccion */
+    instructionRegister = memory[instructionCounter];
+
+    /* 2. Decodificar */
+    operationCode = instructionRegister / 1000;
+    operand = instructionRegister % 1000;
+    if (instructionRegister < 0 || nombreOpcode(operationCode) == NULL) {
+        char msg[80];
+        snprintf(msg, sizeof msg, "codigo de operacion invalido %+06d", instructionRegister);
+        return errorFatal(msg);
     }
-    fclose(archivo);
+
+    if (traza)
+        printf("  [traza] %03d: %+06d  %-12s %03d   acc=%+06d\n", instructionCounter,
+               instructionRegister, nombreOpcode(operationCode), operand, accumulator);
+
+    /* 3. Ejecutar. Por defecto se avanza a la siguiente direccion. */
+    int siguiente = instructionCounter + 1;
+    switch (operationCode) {
+        case READ: {
+            int valor;
+            if (!leerEntero(&valor)) return 0;
+            memory[operand] = valor;
+            break;
+        }
+        case WRITE:
+            printf("%d\n", memory[operand]);
+            break;
+
+        case NEWLINE:
+            printf("\n");
+            break;
+
+        case READ_STRING: {
+            /* memoria[op] = longitud, memoria[op+1 ...] = codigo ASCII de cada caracter */
+            char texto[256];
+            printf("? ");
+            if (scanf(" %255[^\n]", texto) != 1)
+                return errorFatal("READ_STRING sin datos: se termino la entrada");
+            if (eco) printf("%s\n", texto);
+            int len = (int)strlen(texto);
+            if (operand + len >= TAM_MEMORIA) {
+                char msg[100];
+                snprintf(msg, sizeof msg, "READ_STRING: la cadena de %d caracteres no cabe desde la direccion %03d",
+                         len, operand);
+                return errorFatal(msg);
+            }
+            memory[operand] = len;
+            for (int i = 0; i < len; i++)
+                memory[operand + 1 + i] = (unsigned char)texto[i];
+            break;
+        }
+        case WRITE_STRING: {
+            int len = memory[operand];
+            if (len < 0 || operand + len >= TAM_MEMORIA)
+                return errorFatal("WRITE_STRING: no hay una cadena valida en esa direccion");
+            for (int i = 1; i <= len; i++) {
+                int c = memory[operand + i];
+                if (c < 0 || c > 255)
+                    return errorFatal("WRITE_STRING: la cadena contiene un caracter invalido");
+                putchar(c);
+            }
+            break;                                  /* sin salto de linea: usar NEWLINE */
+        }
+
+        case LOAD:
+            accumulator = memory[operand];
+            break;
+        case STORE:
+            memory[operand] = accumulator;
+            break;
+
+        case ADD:
+            if (!enRango((long long)accumulator + memory[operand], "ADD")) return 0;
+            break;
+        case SUBTRACT:
+            if (!enRango((long long)accumulator - memory[operand], "SUBTRACT")) return 0;
+            break;
+        case MULTIPLY:
+            if (!enRango((long long)accumulator * memory[operand], "MULTIPLY")) return 0;
+            break;
+        case DIVIDE:
+            if (memory[operand] == 0) return errorFatal("intento de division entre cero");
+            accumulator /= memory[operand];
+            break;
+        case MODULO:
+            if (memory[operand] == 0) return errorFatal("intento de modulo entre cero");
+            accumulator %= memory[operand];
+            break;
+        case EXPONENT: {
+            int exp = memory[operand];
+            if (exp < 0) return errorFatal("exponente negativo no soportado");
+            long long r = 1;
+            for (int i = 0; i < exp; i++) {
+                r *= accumulator;
+                if (r < MIN_VAL || r > MAX_VAL) {
+                    char msg[100];
+                    snprintf(msg, sizeof msg, "desbordamiento del acumulador en EXPONENT (%d^%d)",
+                             accumulator, exp);
+                    return errorFatal(msg);
+                }
+                if (r == 0 || r == 1) break;        /* base 0 o 1: ya no cambia */
+            }
+            if (exp > 0 && accumulator == -1) r = (exp % 2) ? -1 : 1;
+            accumulator = (int)r;
+            break;
+        }
+
+        case BRANCH:
+            siguiente = operand;
+            break;
+        case BRANCHNEG:
+            if (accumulator < 0) siguiente = operand;
+            break;
+        case BRANCHZERO:
+            if (accumulator == 0) siguiente = operand;
+            break;
+        case HALT:
+            return 0;
+
+        /* Punto flotante en punto fijo: se guarda el valor x 100 (2 decimales).
+           Asi el numero sigue siendo una palabra valida de -99999 a +99999
+           (de -999.99 a +999.99). */
+        case READ_FLOAT: {
+            double x;
+            printf("? ");
+            if (scanf("%lf", &x) != 1) return errorFatal("READ_FLOAT sin datos validos");
+            if (eco) printf("%.2f\n", x);
+            long long escalado = llround(x * ESCALA_FLOTANTE);
+            if (escalado < MIN_VAL || escalado > MAX_VAL)
+                return errorFatal("READ_FLOAT: valor fuera de rango (-999.99 a 999.99)");
+            memory[operand] = (int)escalado;
+            break;
+        }
+        case WRITE_FLOAT:
+            printf("%.2f\n", memory[operand] / (double)ESCALA_FLOTANTE);
+            break;
+        case ADD_FLOAT:
+            if (!enRango((long long)accumulator + memory[operand], "ADD_FLOAT")) return 0;
+            break;
+        case SUB_FLOAT:
+            if (!enRango((long long)accumulator - memory[operand], "SUB_FLOAT")) return 0;
+            break;
+    }
+
+    /* 4. Actualizar el contador de instrucciones */
+    instructionCounter = siguiente;
     return 1;
-}   
+}
 
-void vaciadoMemoria(int memoria[], int acumulador, int contadorInstrucciones, int registroInstrucciones, int codigoOperacion, int operando) {
+/* ======================================================================= */
+/*                          VACIADO DE MEMORIA                             */
+/* ======================================================================= */
+
+static void vaciadoMemoria(void) {
     printf("\nREGISTROS:\n");
-    printf("Acumulador:           %+06d\n", acumulador);
-    printf("ContadorInstrucciones:   %03d\n", contadorInstrucciones);
-    printf("RegistroInstrucciones: %+06d\n", registroInstrucciones);
-    printf("CodigoOperacion:        %02d\n", codigoOperacion);
-    printf("Operando:              %03d\n\n", operando);
+    printf("accumulator          %+06d\n", accumulator);
+    printf("instructionCounter      %03d\n", instructionCounter);
+    printf("instructionRegister  %+06d\n", instructionRegister);
+    printf("operationCode            %02d\n", operationCode);
+    printf("operand                 %03d\n", operand);
 
-    printf("MEMORIA (Primeras 100 posiciones):\n  ");
-    for (int i = 0; i < 10; i++) printf("%7d", i);
+    printf("\nMEMORIA (se omiten las filas que estan completamente en cero):\n     ");
+    for (int c = 0; c < 10; c++) printf("%7d", c);
     printf("\n");
 
-    for (int i = 0; i < 100; i += 10) {
-        printf("%03d ", i);
-        for (int j = 0; j < 10; j++) {
-            printf("%+06d ", memoria[i + j]);
-        }
+    int omitidas = 0;
+    for (int fila = 0; fila < TAM_MEMORIA; fila += 10) {
+        int vacia = 1;
+        for (int c = 0; c < 10; c++)
+            if (memory[fila + c] != 0) vacia = 0;
+        if (vacia && fila != 0) { omitidas++; continue; }
+        if (omitidas > 0) { printf("  ... (%d filas en cero)\n", omitidas); omitidas = 0; }
+        printf("%03d  ", fila);
+        for (int c = 0; c < 10; c++) printf(" %+06d", memory[fila + c]);
         printf("\n");
     }
+    if (omitidas > 0) printf("  ... (%d filas en cero)\n", omitidas);
 }
