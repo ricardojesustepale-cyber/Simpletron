@@ -1,0 +1,14 @@
+$ ./bin/simpletron programas/sml/mayor_dos.sml --traza --eco --sin-dump
+*** Programa cargado desde programas/sml/mayor_dos.sml ***
+*** Inicia la ejecucion del programa ***
+  [traza] 000: +10900  READ         900   acc=+00000
+? 27
+  [traza] 001: +10901  READ         901   acc=+00000
+? 15
+  [traza] 002: +20900  LOAD         900   acc=+00000
+  [traza] 003: +31901  SUBTRACT     901   acc=+00027
+  [traza] 004: +41007  BRANCHNEG    007   acc=+00012
+  [traza] 005: +11900  WRITE        900   acc=+00012
+27
+  [traza] 006: +43000  HALT         000   acc=+00012
+*** Ejecucion de Simpletron terminada (HALT) ***

@@ -1,0 +1,20 @@
+$ ./bin/compilador programas/simple/errores/errores_sintaxis.simple
+errores_sintaxis.simple:2 (linea 20): error: 'ab' no es una variable valida (una sola letra minuscula)
+    | 20 input ab
+errores_sintaxis.simple:3 (linea 30): error: solo se permiten letras minusculas (fuera de 'rem')
+    | 30 Let x = 5
+errores_sintaxis.simple:4 (linea 25): error: los numeros de linea deben ir en orden ascendente (la anterior fue 30)
+    | 25 print x
+errores_sintaxis.simple:5 (linea 40): error: expresion invalida '(3 + 2': agrupacion incorrecta: '(' sin cerrar
+    | 40 let y = (3 + 2
+errores_sintaxis.simple:6 (linea 50): error: para comparar use '==' (no '=')
+    | 50 if x = y goto 10
+errores_sintaxis.simple:8 (linea 70): error: comando desconocido 'imprime'
+    | 70 imprime x
+errores_sintaxis.simple:9 (linea 80): error: la constante 999999 esta fuera del rango de Simpletron (-99999 a 99999)
+    | 80 let z = 999999
+errores_sintaxis.simple:10 (linea 90): error: expresion invalida '2 + * 3': falta un operando antes de '*'
+    | 90 let w = 2 + * 3
+errores_sintaxis.simple (linea 60): error: goto a la linea 200, que no existe
+*** Compilacion fallida: 9 error(es). No se genero programas/simple/errores/errores_sintaxis.sml ***
+Compilando errores_sintaxis.simple ...

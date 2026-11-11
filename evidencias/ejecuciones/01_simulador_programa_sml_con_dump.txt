@@ -1,0 +1,27 @@
+$ ./bin/simpletron programas/sml/promedio_siete.sml --eco
+*** Programa cargado desde programas/sml/promedio_siete.sml ***
+*** Inicia la ejecucion del programa ***
+? 1
+? 2
+? 3
+? 4
+? 5
+? 6
+? 8
+4
+*** Ejecucion de Simpletron terminada (HALT) ***
+
+REGISTROS:
+accumulator          +00004
+instructionCounter      013
+instructionRegister  +43000
+operationCode            43
+operand                 000
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +10900 +20901 +30900 +21901 +20902 +31903 +21902 +42009 +40000 +20901
+010   +32905 +21904 +11904 +43000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (88 filas en cero)
+900   +00008 +00029 +00000 +00001 +00004 +00007 +00000 +00000 +00000 +00000
+  ... (9 filas en cero)

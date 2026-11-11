@@ -1,0 +1,151 @@
+$ ./bin/evaluador pruebas/entradas/expresiones.txt
+Expresion  : 2 + 3 * 4
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : 2 3 4 * +
+Resultado  : 14
+
+Expresion  : (2 + 3) * 4
+Agrupacion : correcta (profundidad maxima 1)
+Postfijo   : 2 3 + 4 *
+Resultado  : 20
+
+Expresion  : 10 - 4 - 3
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : 10 4 - 3 -
+Resultado  : 3
+
+Expresion  : 100 / 10 / 5
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : 100 10 / 5 /
+Resultado  : 2
+
+Expresion  : 2 ^ 3 ^ 2
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : 2 3 2 ^ ^
+Resultado  : 512
+
+Expresion  : (2 ^ 3) ^ 2
+Agrupacion : correcta (profundidad maxima 1)
+Postfijo   : 2 3 ^ 2 ^
+Resultado  : 64
+
+Expresion  : 6 + 2 * 3 ^ 2 - 8 / 4
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : 6 2 3 2 ^ * + 8 4 / -
+Resultado  : 22
+
+Expresion  : 17 % 5 * 2
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : 17 5 % 2 *
+Resultado  : 4
+
+Expresion  : 125 * 40 - 999
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : 125 40 * 999 -
+Resultado  : 4001
+
+Expresion  : (a + b) * c
+Agrupacion : correcta (profundidad maxima 1)
+Postfijo   : a b + c *
+Variables  : a=2 b=3 c=10
+Resultado  : 50
+
+Expresion  : {a + [b * (c - 1)]} / 2
+Agrupacion : correcta (profundidad maxima 3)
+Postfijo   : a b c 1 - * + 2 /
+Variables  : a=4 b=3 c=5
+Resultado  : 8
+
+Expresion  : x ^ 2 - 2 * x + 1
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : x 2 ^ 2 x * - 1 +
+Variables  : x=7
+Resultado  : 36
+
+Expresion  : -5 + 3
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : -5 3 +
+Resultado  : -2
+
+Expresion  : -x ^ 2
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : -1 x 2 ^ *
+Variables  : x=3
+Resultado  : -9
+
+Expresion  : 4 * -(2 + 1)
+Agrupacion : correcta (profundidad maxima 1)
+Postfijo   : 4 -1 * 2 1 + *
+Resultado  : -12
+
+Expresion  : (2 + 3
+Agrupacion : INCORRECTA - '(' sin cerrar
+             (2 + 3
+             ^
+
+Expresion  : 2 + 3)
+Agrupacion : INCORRECTA - ')' sin simbolo de apertura
+             2 + 3)
+                  ^
+
+Expresion  : [2 + (3 * 4])
+Agrupacion : INCORRECTA - ']' no corresponde con '(' abierto en la posicion 5
+             [2 + (3 * 4])
+                        ^
+
+Expresion  : {a + b)
+Agrupacion : INCORRECTA - ')' no corresponde con '{' abierto en la posicion 0
+             {a + b)
+                   ^
+
+Expresion  : 2 + * 3
+Agrupacion : correcta (profundidad maxima 0)
+Sintaxis   : ERROR - falta un operando antes de '*'
+             2 + * 3
+                 ^
+
+Expresion  : 2 3 + 4
+Agrupacion : correcta (profundidad maxima 0)
+Sintaxis   : ERROR - falta un operador antes de '3'
+             2 3 + 4
+               ^
+
+Expresion  : ab + 1
+Agrupacion : correcta (profundidad maxima 0)
+Sintaxis   : ERROR - las variables deben ser de una sola letra
+             ab + 1
+             ^
+
+Expresion  : A + 1
+Agrupacion : correcta (profundidad maxima 0)
+Sintaxis   : ERROR - 'A': solo se permiten letras minusculas
+             A + 1
+             ^
+
+Expresion  : 2 + 3 $ 4
+Agrupacion : correcta (profundidad maxima 0)
+Sintaxis   : ERROR - caracter invalido '$'
+             2 + 3 $ 4
+                   ^
+
+Expresion  : ()
+Agrupacion : correcta (profundidad maxima 1)
+Sintaxis   : ERROR - falta un operando antes de ')'
+             ()
+              ^
+
+Expresion  : 10 / (5 - 5)
+Agrupacion : correcta (profundidad maxima 1)
+Postfijo   : 10 5 5 - /
+Resultado  : no se puede evaluar (division entre cero)
+
+Expresion  : 2 ^ -1
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : 2 -1 ^
+Resultado  : no se puede evaluar (exponente negativo)
+
+Expresion  : y + 1
+Agrupacion : correcta (profundidad maxima 0)
+Postfijo   : y 1 +
+Resultado  : no se puede evaluar (la variable 'y' no tiene valor)
+
