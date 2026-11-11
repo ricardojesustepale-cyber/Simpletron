@@ -1,0 +1,14 @@
+Compilando sin_end.simple ...
+sin_end.simple: advertencia: el programa no tiene 'end'; se agrego HALT al final
+
+TABLA DE SIMBOLOS
+  Simbolo   Tipo   Ubicacion   Descripcion
+  -------   ----   ---------   -----------
+       10      L         000   linea 10
+       20      L         000   linea 20
+       97      V         999   variable 'a'
+       30      L         001   linea 30
+        2      C         998   constante 2
+
+Compilacion exitosa: 6 instrucciones, 3 celdas de datos -> pruebas/obtenidas/sin_end.sml
+[codigo de salida: 0]

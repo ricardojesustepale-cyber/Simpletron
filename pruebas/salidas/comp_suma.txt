@@ -1,0 +1,41 @@
+Compilando suma.simple ...
+=== PRIMERA PASADA ===
+
+TABLA DE SIMBOLOS
+  Simbolo   Tipo   Ubicacion   Descripcion
+  -------   ----   ---------   -----------
+       10      L         000   linea 10
+       15      L         000   linea 15
+       20      L         000   linea 20
+       30      L         000   linea 30
+       97      V         999   variable 'a'
+       40      L         001   linea 40
+       98      V         998   variable 'b'
+       45      L         002   linea 45
+       50      L         002   linea 50
+       60      L         002   linea 60
+       99      V         997   variable 'c'
+       65      L         005   linea 65
+       70      L         005   linea 70
+       80      L         005   linea 80
+       90      L         006   linea 90
+       99      L         006   linea 99
+
+SML preliminar (??? = referencia hacia adelante sin resolver):
++10999   ; 000  READ         999   | 30 input a
++10998   ; 001  READ         998   | 40 input b
++20999   ; 002  LOAD         999   | 60 let c = a + b
++30998   ; 003  ADD          998
++21997   ; 004  STORE        997
++11997   ; 005  WRITE        997   | 80 print c
++43000   ; 006  HALT         000   | 99 end
+
+Arreglo flags (solo entradas distintas de -1):
+  (ninguna referencia pendiente)
+
+=== SEGUNDA PASADA ===
+
+  No habia referencias hacia adelante.
+
+Compilacion exitosa: 7 instrucciones, 3 celdas de datos -> pruebas/obtenidas/suma.sml
+[codigo de salida: 0]

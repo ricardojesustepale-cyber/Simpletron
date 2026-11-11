@@ -1,0 +1,6 @@
+*** Programa cargado desde pruebas/obtenidas/factorial.sml ***
+*** Inicia la ejecucion del programa ***
+? -3
+-1
+*** Ejecucion de Simpletron terminada (HALT) ***
+[codigo de salida: 0]

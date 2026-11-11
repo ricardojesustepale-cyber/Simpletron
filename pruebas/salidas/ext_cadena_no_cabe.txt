@@ -1,0 +1,19 @@
+*** Programa cargado desde programas/sml/errores/cadena_no_cabe.sml ***
+*** Inicia la ejecucion del programa ***
+? una cadena de mas de cinco letras
+
+*** ERROR FATAL: READ_STRING: la cadena de 33 caracteres no cabe desde la direccion 995 (instruccion en la direccion 000) ***
+*** La ejecucion de Simpletron termino en forma anormal ***
+
+REGISTROS:
+accumulator          +00000
+instructionCounter      000
+instructionRegister  +13995
+operationCode            13
+operand                 995
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +13995 +43000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (99 filas en cero)
+[codigo de salida: 2]

@@ -1,0 +1,65 @@
+Compilando factorial.simple ...
+=== PRIMERA PASADA ===
+
+TABLA DE SIMBOLOS
+  Simbolo   Tipo   Ubicacion   Descripcion
+  -------   ----   ---------   -----------
+       10      L         000   linea 10
+       20      L         000   linea 20
+      110      V         999   variable 'n'
+       25      L         001   linea 25
+       30      L         001   linea 30
+        0      C         998   constante 0
+       40      L         004   linea 40
+      102      V         997   variable 'f'
+        1      C         996   constante 1
+       50      L         006   linea 50
+      105      V         995   variable 'i'
+       55      L         008   linea 55
+       60      L         008   linea 60
+       65      L         011   linea 65
+       70      L         014   linea 70
+       75      L         017   linea 75
+       80      L         018   linea 80
+       85      L         019   linea 85
+       90      L         020   linea 90
+       -1      C         994   constante -1
+       99      L         021   linea 99
+
+SML preliminar (??? = referencia hacia adelante sin resolver):
++10999   ; 000  READ         999   | 20 input n
++20999   ; 001  LOAD         999   | 30 if n < 0 goto 90
++31998   ; 002  SUBTRACT     998
++41???   ; 003  BRANCHNEG    ???   -> linea 90 (pendiente)
++20996   ; 004  LOAD         996   | 40 let f = 1
++21997   ; 005  STORE        997
++20996   ; 006  LOAD         996   | 50 let i = 1
++21995   ; 007  STORE        995
++20999   ; 008  LOAD         999   | 60 if i > n goto 80
++31995   ; 009  SUBTRACT     995
++41???   ; 010  BRANCHNEG    ???   -> linea 80 (pendiente)
++20997   ; 011  LOAD         997   | 65 let f = f * i
++33995   ; 012  MULTIPLY     995
++21997   ; 013  STORE        997
++20995   ; 014  LOAD         995   | 70 let i = i + 1
++30996   ; 015  ADD          996
++21995   ; 016  STORE        995
++40008   ; 017  BRANCH       008   | 75 goto 60
++11997   ; 018  WRITE        997   | 80 print f
++40???   ; 019  BRANCH       ???   -> linea 99 (pendiente)
++11994   ; 020  WRITE        994   | 90 print -1
++43000   ; 021  HALT         000   | 99 end
+
+Arreglo flags (solo entradas distintas de -1):
+  flags[003] = 90
+  flags[010] = 80
+  flags[019] = 99
+
+=== SEGUNDA PASADA ===
+
+  celda 003: salto a la linea 90 -> ubicacion 020  =>  +41020
+  celda 010: salto a la linea 80 -> ubicacion 018  =>  +41018
+  celda 019: salto a la linea 99 -> ubicacion 021  =>  +40021
+
+Compilacion exitosa: 22 instrucciones, 6 celdas de datos -> pruebas/obtenidas/factorial.sml
+[codigo de salida: 0]

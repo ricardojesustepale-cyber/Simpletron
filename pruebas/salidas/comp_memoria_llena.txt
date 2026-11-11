@@ -1,0 +1,5 @@
+memoria_llena.simple:168 (linea 1680): error: memoria insuficiente: el programa no cabe en Simpletron
+    | 1680 let a = a * 2 + 167
+*** Compilacion fallida: 1 error(es). No se genero pruebas/obtenidas/memoria_llena.sml ***
+Compilando memoria_llena.simple ...
+[codigo de salida: 1]

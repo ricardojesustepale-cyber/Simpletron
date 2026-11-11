@@ -1,0 +1,23 @@
+*** Programa cargado desde programas/sml/cadenas.sml ***
+*** Inicia la ejecucion del programa ***
+? Ricardo Tepale
+Hola, Ricardo Tepale!
+*** Ejecucion de Simpletron terminada (HALT) ***
+
+REGISTROS:
+accumulator          +00000
+instructionCounter      005
+instructionRegister  +43000
+operationCode            43
+operand                 000
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +13500 +14900 +14500 +14907 +12000 +43000 +00000 +00000 +00000 +00000
+  ... (49 filas en cero)
+500   +00014 +00082 +00105 +00099 +00097 +00114 +00100 +00111 +00032 +00084
+510   +00101 +00112 +00097 +00108 +00101 +00000 +00000 +00000 +00000 +00000
+  ... (38 filas en cero)
+900   +00006 +00072 +00111 +00108 +00097 +00044 +00032 +00001 +00033 +00000
+  ... (9 filas en cero)
+[codigo de salida: 0]

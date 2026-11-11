@@ -1,0 +1,18 @@
+*** Programa cargado desde programas/sml/suma_dos.sml ***
+*** Inicia la ejecucion del programa ***
+? 
+*** ERROR FATAL: READ sin datos: se termino la entrada (instruccion en la direccion 000) ***
+*** La ejecucion de Simpletron termino en forma anormal ***
+
+REGISTROS:
+accumulator          +00000
+instructionCounter      000
+instructionRegister  +10900
+operationCode            10
+operand                 900
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +10900 +10901 +20900 +30901 +21902 +11902 +43000 +00000 +00000 +00000
+  ... (99 filas en cero)
+[codigo de salida: 2]

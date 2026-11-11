@@ -1,0 +1,63 @@
+Compilando promedio.simple ...
+=== PRIMERA PASADA ===
+
+TABLA DE SIMBOLOS
+  Simbolo   Tipo   Ubicacion   Descripcion
+  -------   ----   ---------   -----------
+       10      L         000   linea 10
+       20      L         000   linea 20
+      110      V         999   variable 'n'
+       30      L         001   linea 30
+        0      C         998   constante 0
+       40      L         005   linea 40
+      115      V         997   variable 's'
+       50      L         007   linea 50
+       99      V         996   variable 'c'
+       55      L         009   linea 55
+       60      L         009   linea 60
+      120      V         995   variable 'x'
+       70      L         010   linea 70
+       80      L         013   linea 80
+        1      C         994   constante 1
+       90      L         016   linea 90
+       95      L         020   linea 95
+       99      L         024   linea 99
+
+SML preliminar (??? = referencia hacia adelante sin resolver):
++10999   ; 000  READ         999   | 20 input n
++20999   ; 001  LOAD         999   | 30 if n <= 0 goto 99
++31998   ; 002  SUBTRACT     998
++41???   ; 003  BRANCHNEG    ???   -> linea 99 (pendiente)
++42???   ; 004  BRANCHZERO   ???   -> linea 99 (pendiente)
++20998   ; 005  LOAD         998   | 40 let s = 0
++21997   ; 006  STORE        997
++20998   ; 007  LOAD         998   | 50 let c = 0
++21996   ; 008  STORE        996
++10995   ; 009  READ         995   | 60 input x
++20997   ; 010  LOAD         997   | 70 let s = s + x
++30995   ; 011  ADD          995
++21997   ; 012  STORE        997
++20996   ; 013  LOAD         996   | 80 let c = c + 1
++30994   ; 014  ADD          994
++21996   ; 015  STORE        996
++20996   ; 016  LOAD         996   | 90 if c != n goto 60
++31999   ; 017  SUBTRACT     999
++42020   ; 018  BRANCHZERO   020
++40009   ; 019  BRANCH       009
++20997   ; 020  LOAD         997   | 95 print s / n
++32999   ; 021  DIVIDE       999
++21993   ; 022  STORE        993
++11993   ; 023  WRITE        993
++43000   ; 024  HALT         000   | 99 end
+
+Arreglo flags (solo entradas distintas de -1):
+  flags[003] = 99
+  flags[004] = 99
+
+=== SEGUNDA PASADA ===
+
+  celda 003: salto a la linea 99 -> ubicacion 024  =>  +41024
+  celda 004: salto a la linea 99 -> ubicacion 024  =>  +42024
+
+Compilacion exitosa: 25 instrucciones, 7 celdas de datos -> pruebas/obtenidas/promedio.sml
+[codigo de salida: 0]

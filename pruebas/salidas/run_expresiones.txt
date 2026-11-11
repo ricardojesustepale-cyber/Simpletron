@@ -1,0 +1,12 @@
+*** Programa cargado desde pruebas/obtenidas/expresiones.sml ***
+*** Inicia la ejecucion del programa ***
+? 7
+? 3
+40
+40
+12
+1
+12
+5
+*** Ejecucion de Simpletron terminada (HALT) ***
+[codigo de salida: 0]

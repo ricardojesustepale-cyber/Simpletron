@@ -1,0 +1,9 @@
+*** Programa cargado desde programas/sml/suma_centinela.sml ***
+*** Inicia la ejecucion del programa ***
+? 5
+? 10
+? 20
+? -1
+35
+*** Ejecucion de Simpletron terminada (HALT) ***
+[codigo de salida: 0]

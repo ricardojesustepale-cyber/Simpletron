@@ -1,0 +1,8 @@
+*** Programa cargado desde programas/sml/flotantes.sml ***
+*** Inicia la ejecucion del programa ***
+? 3.50
+? 1.25
+4.75
+2.25
+*** Ejecucion de Simpletron terminada (HALT) ***
+[codigo de salida: 0]

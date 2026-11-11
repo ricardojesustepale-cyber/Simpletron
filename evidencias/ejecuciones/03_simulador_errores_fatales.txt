@@ -1,0 +1,84 @@
+$ ./bin/simpletron programas/sml/errores/division_cero.sml
+*** Programa cargado desde programas/sml/errores/division_cero.sml ***
+*** Inicia la ejecucion del programa ***
+? 8
+? 0
+
+*** ERROR FATAL: intento de division entre cero (instruccion en la direccion 003) ***
+*** La ejecucion de Simpletron termino en forma anormal ***
+
+REGISTROS:
+accumulator          +00008
+instructionCounter      003
+instructionRegister  +32901
+operationCode            32
+operand                 901
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +10900 +10901 +20900 +32901 +43000 +00000 +00000 +00000 +00000 +00000
+  ... (89 filas en cero)
+900   +00008 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (9 filas en cero)
+
+$ ./bin/simpletron programas/sml/errores/opcode_invalido.sml
+*** Programa cargado desde programas/sml/errores/opcode_invalido.sml ***
+*** Inicia la ejecucion del programa ***
+
+*** ERROR FATAL: codigo de operacion invalido +99000 (instruccion en la direccion 001) ***
+*** La ejecucion de Simpletron termino en forma anormal ***
+
+REGISTROS:
+accumulator          +00000
+instructionCounter      001
+instructionRegister  +99000
+operationCode            99
+operand                 000
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +20900 +99000 +43000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (99 filas en cero)
+
+$ ./bin/simpletron programas/sml/errores/desbordamiento.sml
+*** Programa cargado desde programas/sml/errores/desbordamiento.sml ***
+*** Inicia la ejecucion del programa ***
+
+*** ERROR FATAL: desbordamiento del acumulador en ADD (resultado 180000) (instruccion en la direccion 001) ***
+*** La ejecucion de Simpletron termino en forma anormal ***
+
+REGISTROS:
+accumulator          +90000
+instructionCounter      001
+instructionRegister  +30900
+operationCode            30
+operand                 900
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +20900 +30900 +43000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (89 filas en cero)
+900   +90000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (9 filas en cero)
+
+$ ./bin/simpletron programas/sml/errores/direccion_invalida.sml
+*** Programa cargado desde programas/sml/errores/direccion_invalida.sml ***
+*** Inicia la ejecucion del programa ***
+0
+
+*** ERROR FATAL: direccion invalida 1000: el programa salio de la memoria sin HALT ***
+*** La ejecucion de Simpletron termino en forma anormal ***
+
+REGISTROS:
+accumulator          +00000
+instructionCounter      1000
+instructionRegister  +11900
+operationCode            11
+operand                 900
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +40999 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (98 filas en cero)
+990   +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +11900
+

@@ -1,0 +1,35 @@
+$ cd programas/sml && ../../bin/simpletron --sin-dump      (carga programa.simp)
+*** Programa cargado desde programa.simp ***
+*** Inicia la ejecucion del programa ***
+? 2
+? 10
+1024
+*** Ejecucion de Simpletron terminada (HALT) ***
+
+$ ./bin/simpletron programas/sml/modulo_potencia.sml --eco --sin-dump
+*** Programa cargado desde programas/sml/modulo_potencia.sml ***
+*** Inicia la ejecucion del programa ***
+? 17
+? 3
+2
+4913
+*** Ejecucion de Simpletron terminada (HALT) ***
+
+$ ./bin/simpletron programas/sml/cadenas.sml --eco --sin-dump
+*** Programa cargado desde programas/sml/cadenas.sml ***
+*** Inicia la ejecucion del programa ***
+? Ricardo
+Hola, Ricardo!
+*** Ejecucion de Simpletron terminada (HALT) ***
+
+$ ./bin/simpletron programas/sml/flotantes.sml --eco --sin-dump
+*** Programa cargado desde programas/sml/flotantes.sml ***
+*** Inicia la ejecucion del programa ***
+? 3.50
+? 1.25
+4.75
+2.25
+*** Ejecucion de Simpletron terminada (HALT) ***
+
+$ ./bin/simpletron programas/sml/errores/fuera_rango.sml
+*** Error al cargar el programa: linea 3: la palabra +123456 esta fuera del rango permitido (-99999 a +99999) ***

@@ -1,0 +1,23 @@
+*** Programa cargado desde programas/sml/modulo_potencia.sml ***
+*** Inicia la ejecucion del programa ***
+? 17
+? 3
+2
+4913
+*** Ejecucion de Simpletron terminada (HALT) ***
+
+REGISTROS:
+accumulator          +04913
+instructionCounter      010
+instructionRegister  +43000
+operationCode            43
+operand                 000
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +10900 +10901 +20900 +34901 +21902 +11902 +20900 +35901 +21902 +11902
+010   +43000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (88 filas en cero)
+900   +00017 +00003 +04913 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (9 filas en cero)
+[codigo de salida: 0]

@@ -1,0 +1,28 @@
+*** Bienvenido a Simpletron 1000 ***
+*** Introduzca su programa una instruccion (o palabra de datos) ***
+*** a la vez. Se mostrara la direccion y un signo ?.           ***
+*** Teclee -999999 para terminar la carga.                     ***
+000 ? 10009
+001 ? 123456
+*** Palabra fuera de rango (-99999 a +99999), intente de nuevo ***
+001 ? 11009
+002 ? 43000
+003 ? -999999
+*** Carga del programa completada ***
+*** Inicia la ejecucion del programa ***
+? 33
+33
+*** Ejecucion de Simpletron terminada (HALT) ***
+
+REGISTROS:
+accumulator          +00000
+instructionCounter      002
+instructionRegister  +43000
+operationCode            43
+operand                 000
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +10009 +11009 +43000 +00000 +00000 +00000 +00000 +00000 +00000 +00033
+  ... (99 filas en cero)
+[codigo de salida: 0]

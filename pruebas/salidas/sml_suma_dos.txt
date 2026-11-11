@@ -1,0 +1,21 @@
+*** Programa cargado desde programas/sml/suma_dos.sml ***
+*** Inicia la ejecucion del programa ***
+? 15
+? 27
+42
+*** Ejecucion de Simpletron terminada (HALT) ***
+
+REGISTROS:
+accumulator          +00042
+instructionCounter      006
+instructionRegister  +43000
+operationCode            43
+operand                 000
+
+MEMORIA (se omiten las filas que estan completamente en cero):
+           0      1      2      3      4      5      6      7      8      9
+000   +10900 +10901 +20900 +30901 +21902 +11902 +43000 +00000 +00000 +00000
+  ... (89 filas en cero)
+900   +00015 +00027 +00042 +00000 +00000 +00000 +00000 +00000 +00000 +00000
+  ... (9 filas en cero)
+[codigo de salida: 0]
